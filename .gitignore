@@ -1,0 +1,5 @@
+cpp/conan-packages/.idea*
+cpp/eigen-benchmarks/.idea*
+cpp/eigen-benchmarks/build*
+cpp/eigen-benchmarks/cmake-build-debug*
+cpp/eigen-benchmarks/cmake-build-release*

@@ -1,0 +1,7 @@
+[requires]
+gcc/7.1@kapilsh/release
+eigen/3.3.4@conan/stable
+spdlog/0.14.0@bincrafters/stable
+
+[generators]
+cmake
