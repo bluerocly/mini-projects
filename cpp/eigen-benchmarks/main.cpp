@@ -7,8 +7,9 @@
 #include "spdlog/fmt/bundled/ostream.h"
 
 namespace spd = spdlog;
-constexpr int MAX_MATRIX_SIZE = 100;
-constexpr int TOTAL_ITERATIONS = 1000;
+constexpr int MAX_MATRIX_SIZE = 25;
+constexpr int TOTAL_ITERATIONS = 100000;
+constexpr int IGNORE_COUNT = 10;
 
 double_t calc_time(int32_t size);
 
@@ -24,19 +25,25 @@ int main()
     std::map<int32_t, double_t> maxs;
     std::map<int32_t, double_t> mins;
 
+    std::cout << "Matrix Size | Mean | Min | Max" << std::endl;
+    std::cout << "------------|------|-----|----" << std::endl;
+
     for (int i = 0; i < MAX_MATRIX_SIZE; ++i)
     {
         std::vector<double_t> timings;
         for (int j = 0; j < TOTAL_ITERATIONS; ++j)
         {
-            auto time_taken = calc_time(i + 1);
-            timings.push_back(time_taken);
+            if (j >= IGNORE_COUNT) {
+                auto time_taken = calc_time(i + 1);
+                timings.push_back(time_taken);
+            }
         }
 
         auto avg = (std::accumulate(timings.begin(), timings.end(), 0.0) / timings.size());
         auto minimum = *std::min_element(std::begin(timings), std::end(timings));
         auto maximum = *std::max_element(std::begin(timings), std::end(timings));
-        console->info("{} -> Mean: {} Min: {} Max: {}", i + 1, avg, minimum, maximum);
+
+        std::cout << i + 1 << " | " << avg << " | " << minimum << " | " << maximum << std::endl;
     }
 
     console->info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
