@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package inst_service;
+
+service InstrumentService {
+    rpc Get(InstrumentRequest) returns (stream Instrument) {}
+}
+
+message Instrument {
+    int32 id = 1;
+    string ticker = 2;
+    string description = 3;
+    string exchange = 4;
+    double tick_size = 8;
+}
+
+message InstrumentRequest {}

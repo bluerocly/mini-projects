@@ -2,7 +2,7 @@ import os
 import shutil
 
 from conans import ConanFile
-from conans.tools import download, unzip, replace_in_file
+from conans.tools import download, unzip
 
 
 class GccConan(ConanFile):
@@ -36,8 +36,6 @@ class GccConan(ConanFile):
         self.copy('*', src="gcc", dst="")
 
     def package_info(self):
-        # self.env_info.LD_LIBRARY_PATH.append(os.path.join(
-        #     self.package_folder, 'lib'))
         self.env_info.DYLD_LIBRARY_PATH.append(os.path.join(
             self.package_folder, "lib"))
         self.env_info.CPATH.append(os.path.join(
