@@ -9,7 +9,8 @@ public class Forwarder {
 		
 		Context context = ZMQ.context(1);
 		Socket frontend = context.socket(ZMQ.SUB);
-		frontend.bind("tcp://*:9999");
+//		frontend.bind("tcp://*:9999");
+		frontend.bind("ipc://frontend.ipc");
 		frontend.subscribe("".getBytes());
 
 		Socket backend = context.socket(ZMQ.PUB);

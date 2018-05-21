@@ -14,7 +14,9 @@ public class Publisher {
 		Random rand = new Random(System.currentTimeMillis());
 		int serverNo = rand.nextInt(10000);
 
-		publisher.connect("tcp://127.0.0.1:9999");
+//		publisher.connect("tcp://127.0.0.1:9999");
+		
+		publisher.connect("ipc://frontend.ipc");
 
 		System.out.println(String.format("Server : %s", serverNo));
 
