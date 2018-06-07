@@ -3,3 +3,7 @@ cpp/eigen-benchmarks/.idea*
 cpp/eigen-benchmarks/build*
 cpp/eigen-benchmarks/cmake-build-debug*
 cpp/eigen-benchmarks/cmake-build-release*
+
+java/zmq_forwarder/.classpath
+java/zmq_forwarder/.project
+java/zmq_forwarder/.settings/
