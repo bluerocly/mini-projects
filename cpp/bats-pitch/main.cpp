@@ -1,27 +1,9 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include "PitchMessage.h"
 
-enum class MsgType {
-    ADD_ORDER_SHORT = 'A',
-    ADD_ORDER_LONG = 'd',
-    ORDER_EXECUTED = 'E',
-    ORDER_CANCEL = 'X',
-    TRADE_SHORT = 'P',
-    TRADE_LONG = 'r'
-};
-
-int parse_int(std::istream& in, int width) {
-    std::string value_str;
-    in >> std::setw(width) >> value_str;
-    return std::stoi(value_str);
-}
-
-double parse_double(std::istream& in, int width) {
-    std::string value_str;
-    in >> std::setw(width) >> value_str;
-    return std::stod(value_str);
-}
+namespace pb = pitch::bats;
 
 int main() {
 //    freopen("./pitch_example_data", "r", stdin);
@@ -38,7 +20,7 @@ int main() {
         std::cin >> std::setw(8) >> timestamp;
         std::cin >> message_type;
 
-        if (MsgType(message_type) == MsgType::ADD_ORDER_SHORT) {
+        if (pb::MessageType(message_type) == pb::MessageType::ADD_ORDER_SHORT) {
 
             std::cout << "ADDED S : ";
 
@@ -67,7 +49,7 @@ int main() {
 
             std::cout << timestamp << " | " << message_type << " | " << order_id << " | " << side << " | " << shares << " | " << symbol << " | " << price << std::endl;
 
-        } else if (MsgType(message_type) == MsgType::ADD_ORDER_LONG) {
+        } else if (pb::MessageType(message_type) == pb::MessageType::ADD_ORDER_LONG) {
 
             std::cout << "ADDED L :";
 
@@ -97,14 +79,14 @@ int main() {
             std::cout << timestamp << " | " << message_type << " | " << order_id << " | " << side << " | " << shares << " | " << symbol << " | " << price << std::endl;
 
         }
-        else if (MsgType(message_type) == MsgType::ORDER_EXECUTED) {
+        else if (pb::MessageType(message_type) == pb::MessageType::ORDER_EXECUTED) {
 
             std::cout << "EXEC : ";
 
             std::string order_id(12, ' ');
             std::cin.read(&order_id[0], 12);
 
-            int32_t shares = parse_int(std::cin, 6);
+            int32_t shares = pb::parse<pb::Numeric>(std::cin, 6);
 
             std::string exec_id(12, ' ');
             std::cin.read(&exec_id[0], 12);
@@ -114,21 +96,21 @@ int main() {
 
             std::cout << timestamp << " | " << message_type << " | " << order_id << " | " << shares << " | " << exec_id << std::endl;
 
-        } else if (MsgType(message_type) == MsgType::ORDER_CANCEL) {
+        } else if (pb::MessageType(message_type) == pb::MessageType::ORDER_CANCEL) {
 
             std::cout << "CANCEL : ";
 
             std::string order_id;
             std::cin >> std::setw(12) >> order_id;
 
-            int32_t shares = parse_int(std::cin, 6);
+            int32_t shares = pb::parse<pb::Numeric>(std::cin, 6);
 
             char end_line;
             std::cin >> end_line;
 
             std::cout << timestamp << " | " << message_type << " | " << order_id << " | " << shares << std::endl;
 
-        } else if (MsgType(message_type) == MsgType::TRADE_SHORT) {
+        } else if (pb::MessageType(message_type) == pb::MessageType::TRADE_SHORT) {
 
             std::cout << "TRADE S : ";
 
@@ -138,12 +120,12 @@ int main() {
             char side;
             std::cin.get(side);
 
-            int32_t shares = parse_int(std::cin, 6);
+            int32_t shares = pb::parse<pb::Numeric>(std::cin, 6);
 
             std::string symbol;
             std::cin >> std::setw(6) >> symbol;
 
-            double price = parse_double(std::cin, 10) * 0.0001;
+            double price = pb::parse<pb::Prices>(std::cin, 10) * 0.0001;
 
             std::string exec_id;
             std::cin >> std::setw(12) >> exec_id;
@@ -153,7 +135,7 @@ int main() {
 
             std::cout << timestamp << " | " << message_type << " | " << order_id << " | " << side << " | " << shares << " | " << symbol << " | " << price << " | " << exec_id  << std::endl;
 
-        } else if (MsgType(message_type) == MsgType::TRADE_LONG) {
+        } else if (pb::MessageType(message_type) == pb::MessageType::TRADE_LONG) {
 
             std::cout << "TRADE L : ";
 
@@ -163,12 +145,12 @@ int main() {
             char side;
             std::cin.get(side);
 
-            int32_t shares = parse_int(std::cin, 6);
+            int32_t shares = pb::parse<pb::Numeric>(std::cin, 6);
 
             std::string symbol;
             std::cin >> std::setw(8) >> symbol;
 
-            double price = parse_double(std::cin, 10) * 0.0001;
+            double price = pb::parse<pb::Prices>(std::cin, 10) * 0.0001;
 
             std::string exec_id;
             std::cin >> std::setw(12) >> exec_id;
