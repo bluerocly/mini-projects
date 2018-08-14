@@ -2,9 +2,10 @@
 
 namespace pb = pitch::bats;
 
+constexpr int NUM_TOP_PRODUCTS = 10;
+
 int main() {
-  freopen("./pitch_example_data", "r", stdin);
-  pb::TopVolumeCalculator<10> calculator;
+  pb::TopVolumeCalculator<NUM_TOP_PRODUCTS> calculator;
   calculator.process(std::cin);
   std::cout << calculator;
 }
