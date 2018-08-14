@@ -4,7 +4,8 @@
 #include <map>
 #include <memory>
 #include <algorithm>
-#include "array"
+#include <vector>
+#include <array>
 #include "message.h"
 #include "order.h"
 
@@ -98,22 +99,47 @@ class TopVolumeCalculator {
 
   }
   friend std::ostream &operator<<(std::ostream &out, const TopVolumeCalculator &c) {
-    typedef std::pair<std::string, int64_t > Pair;
+//    typedef std::pair<std::string, int64_t > Pair;
+//
+//    std::array<int64_t , N> top_volume;
+//
+//    std::partial_sort_copy(
+//        c.executed_volume_.cbegin(), c.executed_volume_.cend(),
+//        top_volume.begin(), top_volume.end(),
+//        [](const Pair &lhs, const Pair &rhs) {
+//          return lhs.second > rhs.second;
+//        }
+//    );
+//
 
-    std::array<int64_t , N> top_volume;
+    std::vector<std::pair<std::string, int64_t >> top_volume(c.executed_volume_.size());
 
-    std::partial_sort_copy(
-        c.executed_volume_.cbegin(), c.executed_volume_.cend(),
-        top_volume.begin(), top_volume.end(),
-        [](const Pair &lhs, const Pair &rhs) {
-          return lhs.second > rhs.second;
-        }
-    );
+    for (auto &ev: c.executed_volume_) {
+      top_volume.push_back(ev);
+    }
+
+    std::partial_sort(top_volume.begin(),
+                      top_volume.begin() + 10,
+                      top_volume.end(),
+                      [](std::pair<std::string, int64_t > &l,
+                         std::pair<std::string, int64_t > &r) {
+                        return l.second > r.second;
+                      });
 
     for (auto &pair: top_volume) {
       out << std::left << std::setw(6) << pair.first << std::right << std::setw(10) << pair.second << "\n";
     }
 
+    return out;
+//    std::partial_sort_copy(c.executed_volume_.begin(),
+//                           c.executed_volume_.end(),
+//                           top_volume.begin(),
+//                           top_volume.end(),
+//                           [](std::pair<const std::string, int64_t > const& l,
+//                              std::pair<const std::string, int64_t > const& r)
+//                           {
+//                             return l.second > r.second;
+//                           });
   }
 };
 
