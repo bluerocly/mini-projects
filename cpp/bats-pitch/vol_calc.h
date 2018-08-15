@@ -19,14 +19,14 @@ namespace pitch {
         template<int32_t N = 10>
         class TopVolumeCalculator {
 
-            static constexpr int SHARES_SIZE = 6;
+            static constexpr int SHARES_SIZE = 10;
+            static constexpr int SYMBOL_SIZE = 6;
 
         private:
             OrderCache order_cache_;
             std::map<std::string, int64_t> executed_volume_;
 
             void execute(const std::string &symbol, const uint32_t volume) {
-                std::cout << "ADDING " << symbol << std::endl;
                 auto found_iter = executed_volume_.find(symbol);
                 if (found_iter == executed_volume_.end()) {
                     executed_volume_[symbol] = 0;
@@ -44,7 +44,6 @@ namespace pitch {
 
         public:
             void process(std::istream &in) {
-                uint32_t count = 1;
 
                 while (in.good() && parse<char>(in, 1) /*Get First Character S and Ignore*/ ) {
 
@@ -53,8 +52,6 @@ namespace pitch {
                         break;
                     }
 #endif
-
-                    std::cout << "Processing " << count << " -> " << " .. ";
 
                     PitchMessageheader header(in);
 
@@ -66,7 +63,6 @@ namespace pitch {
                         order_cache_[message.order_id()]->quantity = message.shares();
                         order_cache_[message.order_id()]->symbol = message.symbol();
                         order_cache_[message.order_id()]->price = message.price();
-                        std::cout << " .. ADDED SHORT";
                     } else if (header.message_type == MessageType::ADD_ORDER_LONG) {
                         AddOrderLongMessage message(header, in);
                         order_cache_[message.order_id()] = std::unique_ptr<Order>(new Order);
@@ -80,29 +76,21 @@ namespace pitch {
                         order_cache_[message.order_id()]->quantity -= message.shares();
                         execute(order_cache_[message.order_id()]->symbol, message.shares());
                         cleanup(message.order_id());
-                        std::cout << " .. EXEC";
                     } else if (header.message_type == MessageType::ORDER_CANCEL) {
                         OrderCancelMessage message(header, in);
                         order_cache_[message.order_id()]->quantity -= message.shares();
                         cleanup(message.order_id());
-                        std::cout << " .. ORDER CANCEL";
                     } else if (header.message_type == MessageType::TRADE_SHORT) {
                         TradeShortMessage message(header, in);
                         execute(message.symbol(), message.shares());
-                        std::cout << " .. TRADE SHORT";
                     } else if (header.message_type == MessageType::TRADE_LONG) {
                         TradeLongMessage message(header, in);
                         execute(message.symbol(), message.shares());
-                        std::cout << " .. TRADE LONG";
                     } else {
+                        // IGNORE
                         std::string remaining;
                         std::getline(in, remaining);
-                        std::cout << remaining;
                     }
-
-                    std::cout << std::endl;
-
-                    count++;
                 }
 
             }
@@ -115,7 +103,7 @@ namespace pitch {
                                      const std::pair<std::string, int64_t> &r) { return l.second > r.second; });
 
                 for (auto &v : top_volume) {
-                    out << std::left << std::setw(6) << v.first << std::right << std::setw(10)
+                    out << std::left << std::setw(SYMBOL_SIZE) << v.first << std::right << std::setw(SHARES_SIZE)
                         << v.second << "\n";
                 }
 

@@ -29,7 +29,6 @@ template<>
 uint32_t parse<uint32_t>(std::istream &in, int width) {
   std::string rv_str;
   in >> std::setw(width) >> rv_str;
-  std::cout << "Parsing .. " << rv_str << " .. ";
   return static_cast<uint32_t>(std::stoi(rv_str));
 }
 
