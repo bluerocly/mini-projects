@@ -99,9 +99,6 @@ namespace pitch {
             friend std::ostream &operator<<(std::ostream &out, const TopVolumeCalculator &c) {
                 std::vector<std::pair<std::string, int64_t>> top_volume(c.num_products_);
 
-                // There is a bug in older versions of GCC where this will not compile
-                // Bug 57775 - default argument for template parameter error for friend definition in template
-
                 std::partial_sort_copy(c.executed_volume_.begin(), c.executed_volume_.end(), top_volume.begin(), top_volume.end(),
                                   [](const std::pair<std::string, int64_t> &l,
                                      const std::pair<std::string, int64_t> &r) { return l.second > r.second; });
