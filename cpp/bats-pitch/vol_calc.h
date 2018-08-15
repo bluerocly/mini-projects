@@ -5,7 +5,6 @@
 #include <memory>
 #include <algorithm>
 #include <vector>
-#include <array>
 #include "message.h"
 #include "order.h"
 
@@ -16,7 +15,6 @@ namespace pitch {
 
         typedef std::map<std::string, std::unique_ptr<Order>> OrderCache;
 
-        template<int32_t N = 10>
         class TopVolumeCalculator {
 
             static constexpr int SHARES_SIZE = 10;
@@ -25,6 +23,7 @@ namespace pitch {
         private:
             OrderCache order_cache_;
             std::map<std::string, int64_t> executed_volume_;
+            int num_products_;
 
             void execute(const std::string &symbol, const uint32_t volume) {
                 auto found_iter = executed_volume_.find(symbol);
@@ -43,6 +42,8 @@ namespace pitch {
             }
 
         public:
+            TopVolumeCalculator(int num_products) :num_products_(num_products) {}
+
             void process(std::istream &in) {
 
                 while (in.good() && parse<char>(in, 1) /*Get First Character S and Ignore*/ ) {
@@ -96,7 +97,10 @@ namespace pitch {
             }
 
             friend std::ostream &operator<<(std::ostream &out, const TopVolumeCalculator &c) {
-                std::array<std::pair<std::string, int64_t>, N> top_volume;
+                std::vector<std::pair<std::string, int64_t>> top_volume(c.num_products_);
+
+                // There is a bug in older versions of GCC where this will not compile
+                // Bug 57775 - default argument for template parameter error for friend definition in template
 
                 std::partial_sort_copy(c.executed_volume_.begin(), c.executed_volume_.end(), top_volume.begin(), top_volume.end(),
                                   [](const std::pair<std::string, int64_t> &l,
