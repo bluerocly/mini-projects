@@ -8,8 +8,9 @@ from scipy.linalg import solve_triangular
 
 # Numpy dtype warning:
 # https://github.com/ContinuumIO/anaconda-issues/issues/6678
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+    warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
 
 formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - '
